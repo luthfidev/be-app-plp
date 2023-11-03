@@ -1,0 +1,11 @@
+APP_PORT = 7000
+APP_URL = http://localhost:5000
+
+DB_HOST = 
+DB_USER = 
+DB_PASS = 
+DB_NAME = aplp
+DB_PORT = 3306
+
+TOKEN_SECRET = asda7sdasda&&sdask
+TOKEN_ALGORITMA = HS256
