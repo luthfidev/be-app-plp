@@ -97,25 +97,33 @@ module.exports = {
 
   updatePelanggan: async (req, res) => {
 
-    const { id_pelanggan, username, password, nomor_kwh, nama_pelanggan, alamat, id_tarif } = req.body
-
-    console.log(id_pelanggan)
-
+    let { id_pelanggan, username, password, nomor_kwh, nama_pelanggan, alamat, id_tarif } = req.body
+    
     try {
 
-      const checkId = await pelangganModel.getPelangganByCondition({ id_pelanggan: parseInt(id_pelanggan) });
+      const isExistPelanggan = await pelangganModel.getPelangganByCondition({ id_pelanggan: parseInt(id_pelanggan) });
 
-      if (checkId.length < 1) throw new Error("Pelanggan not found");
+      if (isExistPelanggan.length < 1) throw new Error("Pelanggan not found");
 
       const passwordHash = await bcrypt.hash(password, saltRounds);
+
+      username = username || isExistPelanggan[0].username
+      password = password || isExistPelanggan[0].password
+      nomor_kwh = nomor_kwh || isExistPelanggan[0].nomor_kwh
+      nama_pelanggan = nama_pelanggan || isExistPelanggan[0].nama_pelanggan
+      alamat = alamat || isExistPelanggan[0].alamat
+      id_tarif = id_tarif || isExistPelanggan[0].id_tarif
 
       const pelangganData = [
         { username, password: passwordHash, nomor_kwh, nama_pelanggan, alamat, id_tarif},
         { id_pelanggan: id_pelanggan }
       ]
+
       const results = await pelangganModel.updatePelanggan(pelangganData)
 
       if (!results) throw new Error("Update pelanggan failed");
+
+      delete pelangganData[0].password
 
         const data = {
           success: true,
